@@ -1,4 +1,5 @@
 # ReleaseNotesGenerator
+[![.NET Framework](https://github.com/Ali3nSVK/ReleaseNotesGenerator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Ali3nSVK/ReleaseNotesGenerator/actions/workflows/dotnet.yml)
 ## Purpose
 Generates release notes from subversion commit messages as part of a CI/CD pipeline.
 * Requires SVN installed and set up in PATH.
