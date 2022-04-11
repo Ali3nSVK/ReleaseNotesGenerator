@@ -1,0 +1,59 @@
+﻿<Window x:Class="ReleaseNotesGenerator.RNGWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReleaseNotesGenerator"
+        mc:Ignorable="d"
+        Title="Release Notes Generator" Height="250" Width="550" Icon="/Resources/icon.ico"
+        MinHeight="250" MinWidth="550">
+    <Grid Background="Azure">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <GroupBox x:Name="RepoBox" Header="SVN Repository" Margin="2,2,2,5" BorderThickness="0.5" Grid.Row="0">
+            <Grid Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Select:" HorizontalAlignment="Left" Margin="0,2,0,0" Grid.Column="0"/>
+                <ComboBox x:Name="Repositories" IsEnabled="False" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Config.Repos, Mode=TwoWay}" SelectedValue="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=SelectedRepo, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Key" Margin="2,2,2,2" Grid.Column="1"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox x:Name="VersionBox" Header="Repository Version" Margin="2,2,2,5" BorderThickness="0.5" Grid.Row="1">
+            <Grid Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Last deployed version:" HorizontalAlignment="Left" Margin="0,2,0,0" Grid.Column="0"/>
+                <TextBox x:Name="LastVersionTextbox" Margin="2,2,2,2" Grid.Column="1" TextChanged="LastVersionTextbox_TextChanged"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox x:Name="GenerateBox" Header="Generate" Margin="2,2,2,5" BorderThickness="0.5" Grid.Row="2">
+            <Grid Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="GenerateButton" Content="Generate" IsEnabled="False" Margin="2,2,2,2" Width="100" Grid.Column="0" Grid.Row="0" Click="GenerateButton_Click"/>
+                <ProgressBar x:Name="ProgBar" Minimum="0" Maximum="100" Margin="2,2,2,2" Grid.Column="1" Grid.Row="0"/>
+                <Label x:Name="InfoLabel" Background="AliceBlue" Content="Idle..." Margin="2,2,2,2" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" FontSize="10"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
