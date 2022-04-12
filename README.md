@@ -9,4 +9,4 @@ Generates release notes from subversion commit messages as part of a CI/CD pipel
 
 ## Usage
 Just run it and follow instructions.
-It is however very project specific and not exactly reusable.
+It is in its current state somewhat project specific and might require tweaks to be reusable.
