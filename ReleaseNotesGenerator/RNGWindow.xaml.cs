@@ -17,7 +17,6 @@ namespace ReleaseNotesGenerator
         
         private string AppPath;
         private string LastVersion;
-        private string SVNLog;
 
         public ConfigContent Config { get; set; }
         public string SelectedRepo { get; set; }
@@ -32,7 +31,6 @@ namespace ReleaseNotesGenerator
         {
             AppPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             LastVersion = string.Empty;
-            SVNLog = string.Empty;
 
             svn = new SubversionHandler();
             cfg = new ConfigHandler(AppPath + "\\" + Constants.ConfigName);
@@ -60,7 +58,7 @@ namespace ReleaseNotesGenerator
 
                 UpdateStatus(Constants.StatusLog);
                 svn.LimitThreshold = Config.LimitThreshold;
-                SVNLog = await svn.GetSvnLog(svnPath, LastVersion);
+                var SVNLog = await svn.GetSvnLog(svnPath, LastVersion);
 
                 UpdateStatus(Constants.StatusParse);
                 var parsedCommits = LogParser.GetParsedCommitInfo(SVNLog);

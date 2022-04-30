@@ -22,49 +22,37 @@ namespace ReleaseNotesGenerator.Sources
                 if (match.Success)
                 {
                     NewVersionBump(match.Value);
+                    continue;
                 }
-                else
-                {
-                    string jira = string.Empty;
-                    string desc = string.Empty;
 
-                    // Regular commit
-                    if ((match = Regex.Match(commit, @"(?<=^JIRA\sIssue:)((?s)\s.*)(?=Description:)", RegexOptions.Multiline)).Success)
-                    {
-                        jira = match.Value.Trim();
-                    }
+                var jiras = Regex.Matches(commit, @"(?<=^JIRA\sIssue:)((?s)\s.*?)(?=(Description|Merge))", RegexOptions.Multiline);
+                var descs = Regex.Matches(commit, @"(?<=^Description:)((?s).*?)(?=Reviewer:)", RegexOptions.Multiline);
 
-                    if ((match = Regex.Match(commit, @"(?<=^Description:)((?s).*)(?=Reviewer:)", RegexOptions.Multiline)).Success)
-                    {
-                        desc = match.Value.Trim();
-                    }
-
-                    NewCommit(jira, desc);
-                }
+                NewCommit(
+                    jiras.Cast<Match>().Select(j => j.Value.Trim()).ToList(),
+                    descs.Cast<Match>().Select(d => d.Value.Trim()).ToList());
             }
 
             return commitInfos;
         }
 
-        private static void NewCommit(string jira, string desc)
+        private static void NewCommit(List<string> jiras, List<string> descs)
         {
-            CommitInfo commit = commitInfos.FirstOrDefault(c => c.JiraIssue == jira);
+            CommitInfo commit = commitInfos.FirstOrDefault(c => c.JiraIssuesList.Intersect(jiras).Any());
 
             if (commit != null)
             {
-                if (commit.Descriptions.FirstOrDefault(c => c.Equals(desc)) == null)
-                {
-                    commit.Descriptions.Add(desc);
-                }
+                commit.JiraIssuesList = commit.JiraIssuesList.Union(jiras).Distinct().ToList();
+                commit.DescriptionsList = commit.DescriptionsList.Union(descs).Distinct().ToList();
             }
             else
             {
                 commit = new CommitInfo
                 {
-                    JiraIssue = jira
+                    JiraIssuesList = jiras.Distinct().ToList(),
+                    DescriptionsList = descs.Distinct().ToList()
                 };
-                commit.Descriptions.Add(desc);
-                
+
                 commitInfos.Add(commit);
             }
         }

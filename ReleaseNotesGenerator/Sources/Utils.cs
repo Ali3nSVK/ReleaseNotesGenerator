@@ -51,12 +51,15 @@ namespace ReleaseNotesGenerator.Sources
         public bool VersionBump;
         public string BuildVersion;
 
-        public string JiraIssue;
-        public List<string> Descriptions;
+        public List<string> JiraIssuesList;
+        public List<string> DescriptionsList;
+
+        public string JiraIssuesFormatted => string.Join(", ", JiraIssuesList);
 
         public CommitInfo()
         {
-            Descriptions = new List<string>();
+            DescriptionsList = new List<string>();
+            JiraIssuesList = new List<string>();
         }
     }
 }

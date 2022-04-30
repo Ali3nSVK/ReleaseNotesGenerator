@@ -25,9 +25,9 @@ namespace ReleaseNotesGenerator.Sources
                 }
                 else
                 {
-                    sb.AppendFormat("JIRA Issue: {0}<br>", commitInfo.JiraIssue).AppendLine();
+                    sb.AppendFormat("JIRA Issue: {0}<br>", commitInfo.JiraIssuesFormatted).AppendLine();
 
-                    foreach(var desc in commitInfo.Descriptions)
+                    foreach(var desc in commitInfo.DescriptionsList)
                     {
                         sb.AppendFormat("Description: {0}<br>", desc).AppendLine();
                     }
