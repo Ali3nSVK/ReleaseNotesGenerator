@@ -45,7 +45,7 @@ jobs:
       - name: Navigate to Artifacts
         run: cd RNGFiles
         
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           repo_token: "${{ secrets.RELEASE_TOKEN }}"
           automatic_release_tag: "latest"
