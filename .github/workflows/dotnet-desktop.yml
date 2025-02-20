@@ -51,6 +51,5 @@ jobs:
           name: Latest Build
           body: Automated release from GitHub Actions
           files: RNGFiles/ReleaseNotesGenerator*.exe
-          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
