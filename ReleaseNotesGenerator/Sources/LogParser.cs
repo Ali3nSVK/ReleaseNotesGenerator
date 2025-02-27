@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ReleaseNotesGenerator.Utils;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -8,7 +9,7 @@ namespace ReleaseNotesGenerator.Sources
     {
         private static List<CommitInfo> commitInfos;
 
-        public static List<CommitInfo> GetParsedCommitInfo(string SvnLogContent)
+        public static List<CommitInfo> GetParsedCommitInfo(string SvnLogContent, string lastVersion)
         {
             commitInfos = new List<CommitInfo>();
 
@@ -22,7 +23,11 @@ namespace ReleaseNotesGenerator.Sources
                 if (match.Success)
                 {
                     NewVersionBump(match.Value);
-                    continue;
+
+                    if (match.Value.Contains(lastVersion))
+                        break;
+                    else
+                        continue;
                 }
 
                 var jiras = Regex.Matches(commit, @"(?<=^JIRA\sIssue:)((?s)\s.*?)(?=(Description|Merge))", RegexOptions.Multiline);

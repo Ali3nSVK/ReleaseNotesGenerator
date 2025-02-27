@@ -1,0 +1,8 @@
+{
+  "LimitThreshold": 500,
+  "Repos": {
+    "MainRepo": "http://svn.example.com/main",
+    "DevRepo": "http://svn.example.com/dev"
+  },
+  "EmailContent": "Dear all,<br><br>This is an <b>example</b> email.<br><br>"
+}

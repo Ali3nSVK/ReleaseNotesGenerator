@@ -1,4 +1,5 @@
 ﻿using ReleaseNotesGenerator.Sources;
+using ReleaseNotesGenerator.Utils;
 using System;
 using System.IO;
 using System.Linq;
@@ -61,8 +62,8 @@ namespace ReleaseNotesGenerator
                 var SVNLog = await svn.GetSvnLog(svnPath, LastVersion);
 
                 UpdateStatus(Constants.StatusParse);
-                var parsedCommits = LogParser.GetParsedCommitInfo(SVNLog);
-                ReportWriter.WriteHtml(parsedCommits, LastVersion, Config.EmailContent);
+                var parsedCommits = LogParser.GetParsedCommitInfo(SVNLog, LastVersion);
+                ReportWriter.WriteHtml(parsedCommits, Config.EmailContent);
 
                 ProgBar.IsIndeterminate = false;
                 UpdateStatus(Constants.StatusIdle);
@@ -95,14 +96,13 @@ namespace ReleaseNotesGenerator
 
             if (!File.Exists(cfg.ConfigFilePath))
             {
-                cfg.SetDefault();
-                cfg.Save();
+                cfg.CreateDefaultConfig();
 
                 Fail(Constants.NoCFG);
                 return;
             }
 
-            Config = cfg.Load();
+            Config = cfg.ReadConfig();
 
             if (Config.Repos.ContainsKey("ExREPO"))
             {
