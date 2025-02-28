@@ -5,7 +5,8 @@ Generates release notes from subversion commit messages as part of a CI/CD pipel
 * Requires SVN installed and set up in PATH.
   * Does not require checkouts or local working copies.
 * Outputs HTML formatted report.
-* XML config for repo and options setup.
+* Outlook interop for direct email preparation
+* JSON config for repo and options setup.
 
 ## Usage
 Just run it and follow instructions.
