@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReleaseNotesGenerator"
         mc:Ignorable="d"
-        Title="Release Notes Generator" Height="250" Width="550" Icon="/Resources/icon.ico"
-        MinHeight="250" MinWidth="550">
+        Title="Release Notes Generator" Height="270" Width="550" Icon="/Resources/icon.ico"
+        MinHeight="270" MinWidth="550">
     <Grid Background="Azure">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -21,20 +21,28 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <Label Content="Select:" HorizontalAlignment="Left" Margin="0,2,0,0" Grid.Column="0"/>
-                <ComboBox x:Name="Repositories" IsEnabled="False" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Config.Repos, Mode=TwoWay}" SelectedValue="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=SelectedRepo, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Key" Margin="2,2,2,2" Grid.Column="1"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label Content="Select:" HorizontalAlignment="Left" Margin="0,2,0,0" Grid.Row="0"  Grid.Column="0"/>
+                <ComboBox x:Name="Repositories" IsEnabled="False" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Config.Repos, Mode=TwoWay}" SelectedValue="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=SelectedRepo, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Key" Margin="2,2,2,2" Grid.Row="0" Grid.Column="1"/>
+
+                <Label Content="Last deployed ver.:" HorizontalAlignment="Left" Margin="0,2,0,0" Grid.Row="1" Grid.Column="0"/>
+                <TextBox x:Name="LastVersionTextbox" Margin="2,2,2,2" Grid.Row="1" Grid.Column="1" TextChanged="LastVersionTextbox_TextChanged"/>
             </Grid>
         </GroupBox>
 
-        <GroupBox x:Name="VersionBox" Header="Repository Version" Margin="2,2,2,5" BorderThickness="0.5" Grid.Row="1">
+        <GroupBox x:Name="OptionsBox" Header="Options" Margin="2,2,2,5" BorderThickness="0.5" Grid.Row="1">
             <Grid Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <Label Content="Last deployed version:" HorizontalAlignment="Left" Margin="0,2,0,0" Grid.Column="0"/>
-                <TextBox x:Name="LastVersionTextbox" Margin="2,2,2,2" Grid.Column="1" TextChanged="LastVersionTextbox_TextChanged"/>
+                <CheckBox Content="Include email body" IsChecked="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IncludeEmailBody, Mode=TwoWay}" IsThreeState="False" Grid.Column="0" Margin="5,5,5,5"/>
+                <CheckBox Content="Open new email window" IsChecked="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=OpenEmailWindow, Mode=TwoWay}" IsThreeState="False" Grid.Column="1" Margin="5,5,5,5"/>
             </Grid>
         </GroupBox>
 

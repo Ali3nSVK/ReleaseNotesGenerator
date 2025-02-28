@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ReleaseNotesGenerator.Sources
+﻿namespace ReleaseNotesGenerator.Utils
 {
     public static class Constants
     {
@@ -9,12 +7,13 @@ namespace ReleaseNotesGenerator.Sources
         public static string NoDEF = "Update your config file with proper SVN repos and run RNG again.";
         public static string NoDIR = "Invalid SVN working directory.";
         public static string NoREP = "Specified URL is not a valid SVN repository.";
+        public static string NoEXC = "Please close outlook before proceeding. Continue?";
 
         public static string StatusIdle = "Idle...";
         public static string StatusLog = "Retrieving SVN repository log...";
         public static string StatusParse = "Parsing SVN log...";
 
-        public static string ConfigName = "RNGConfig.xml";
+        public static string ConfigName = "settings.json";
     }
 
     public static class SvnConstants
@@ -31,35 +30,6 @@ namespace ReleaseNotesGenerator.Sources
         public static string SvnInfo(string url)
         {
             return string.Format("svn info {0}", url);
-        }
-    }
-
-    public class ConfigContent
-    {
-        public int LimitThreshold { get; set; }
-        public Dictionary<string, string> Repos { get; set; }
-        public string EmailContent { get; set; }
-
-        public ConfigContent()
-        {
-            Repos = new Dictionary<string, string>();
-        }
-    }
-
-    public class CommitInfo
-    {
-        public bool VersionBump;
-        public string BuildVersion;
-
-        public List<string> JiraIssuesList;
-        public List<string> DescriptionsList;
-
-        public string JiraIssuesFormatted => string.Join(", ", JiraIssuesList);
-
-        public CommitInfo()
-        {
-            DescriptionsList = new List<string>();
-            JiraIssuesList = new List<string>();
         }
     }
 }

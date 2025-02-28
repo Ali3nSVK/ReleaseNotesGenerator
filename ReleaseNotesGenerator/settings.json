@@ -1,0 +1,19 @@
+{
+  "LimitThreshold": 150,
+  "Repos": {
+    "MainRepo": "http://svn.company.com/project/trunk",
+    "DevRepo": "http://svn.company.com/project/branches/development",
+    "QARepo": "http://svn.company.com/project/branches/qa"
+  },
+  "EmailContent": "This is a notification about SVN repository changes. Please review the recent commits and ensure they follow our code standards.",
+  "EmailSubject": "SVN Changes",
+  "EmailRecipients": [
+    "development-team@company.com",
+    "project-manager@company.com",
+    "tech-lead@company.com"
+  ],
+  "CcRecipients": [
+    "repository-admin@company.com",
+    "qa-notifications@company.com"
+  ]
+}

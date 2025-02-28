@@ -44,12 +44,16 @@ jobs:
           name: RNGFiles
           path: RNGFiles
           
+      - name: Zipup
+        run: |
+          zip -r RNG.zip RNGFiles
+          
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: Latest Build
           body: Automated release from GitHub Actions
-          files: RNGFiles/ReleaseNotesGenerator*.exe
+          files: RNG.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

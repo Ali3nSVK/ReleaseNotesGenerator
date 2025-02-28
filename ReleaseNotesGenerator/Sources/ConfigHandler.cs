@@ -1,54 +1,103 @@
-﻿using System.Linq;
-using System.Xml.Linq;
+﻿using Newtonsoft.Json;
+using ReleaseNotesGenerator.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace ReleaseNotesGenerator.Sources
 {
     public class ConfigHandler
     {
-        public string ConfigFilePath { get; private set; }
+        private readonly string _configFilePath;
 
-        private readonly ConfigContent configContent;
+        public string ConfigFilePath => _configFilePath;
 
-        public ConfigHandler(string config)
+        public ConfigHandler(string configFilePath = null)
         {
-            ConfigFilePath = config;
-            configContent = new ConfigContent();
+            _configFilePath = configFilePath ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
         }
 
-        public void SetDefault()
+        public ConfigContent ReadConfig()
         {
-            configContent.Repos.Clear();
-            configContent.Repos.Add("ExREPO", "https://server.com/repo");
-            configContent.LimitThreshold = 500;
-            configContent.EmailContent = string.Empty;
+            if (!File.Exists(_configFilePath))
+            {
+                throw new FileNotFoundException($"Configuration file not found at: {_configFilePath}");
+            }
+
+            try
+            {
+                string json = File.ReadAllText(_configFilePath, Encoding.UTF8);
+                var config = JsonConvert.DeserializeObject<ConfigContent>(json);
+
+                if (config.Repos == null)
+                {
+                    config.Repos = new Dictionary<string, string>();
+                }
+
+                if (config.EmailRecipients == null)
+                {
+                    config.EmailRecipients = new List<string>();
+                }
+
+                if (config.CcRecipients == null)
+                {
+                    config.CcRecipients = new List<string>();
+                }
+
+                return config;
+            }
+            catch (JsonException ex)
+            {
+                throw new JsonException($"Error deserializing settings.json: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error reading configuration: {ex.Message}", ex);
+            }
         }
 
-        public void Save()
+        public void WriteConfig(ConfigContent config)
         {
-            var xml =
-                new XElement("Config",
-                    new XElement("RevisionLimit", configContent.LimitThreshold),
-                    new XElement("EmailContent", configContent.EmailContent),
-                    new XElement("Repositories", configContent.Repos.Select(r => 
-                        new XElement("Repo", 
-                            new XElement("Name", r.Key), 
-                            new XElement("URL", r.Value)))));
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
 
-            xml.Save(ConfigFilePath);
+            try
+            {
+                string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+                File.WriteAllText(_configFilePath, json, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error writing configuration: {ex.Message}", ex);
+            }
         }
 
-        public ConfigContent Load()
+        public ConfigContent CreateDefaultConfig(int limitThreshold = 500)
         {
-            XDocument config = XDocument.Load(ConfigFilePath);
-            var doc = XElement.Parse(config.ToString());
+            if (File.Exists(_configFilePath))
+            {
+                return ReadConfig();
+            }
 
-            configContent.Repos.Clear();
+            var defaultConfig = new ConfigContent
+            {
+                LimitThreshold = limitThreshold,
+                EmailContent = "Default email content about SVN repository changes.",
+                EmailSubject = "SVN Changes",
+                EmailRecipients = new List<string> { "team@example.com", "manager@example.com" },
+                CcRecipients = new List<string> { "records@example.com" },
+                Repos = new Dictionary<string, string>
+                {
+                    { "MainRepo", "http://svn.example.com/main" },
+                    { "DevRepo", "http://svn.example.com/dev" }
+                }
+            };
 
-            configContent.LimitThreshold = int.Parse(doc.Element("RevisionLimit").Value);
-            configContent.EmailContent = doc.Element("EmailContent").Value.Trim();
-            configContent.Repos = doc.Elements("Repositories").Descendants("Repo").ToDictionary(k => k.Element("Name").Value, k => k.Element("URL").Value);
-
-            return configContent;
+            WriteConfig(defaultConfig);
+            return defaultConfig;
         }
     }
 }
