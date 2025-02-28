@@ -27,7 +27,7 @@ jobs:
       run: msbuild.exe ReleaseNotesGenerator.sln /p:platform="Any CPU" /p:Configuration="Release"
       
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: RNGFiles
         path: ReleaseNotesGenerator\bin\Release
@@ -35,20 +35,25 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: RNGFiles
           path: RNGFiles
       
-      - name: Navigate to Artifacts
-        run: cd RNGFiles
-        
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Zipup
+        run: |
+          zip -r RNG.zip RNGFiles
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          repo_token: "${{ secrets.RELEASE_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: false
-          files: |
-            RNGFiles/ReleaseNotesGenerator*.exe
+          tag_name: latest
+          name: Latest Build
+          body: Automated release from GitHub Actions
+          files: RNG.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
