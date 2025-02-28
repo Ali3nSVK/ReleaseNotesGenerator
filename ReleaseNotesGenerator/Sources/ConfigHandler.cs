@@ -30,10 +30,19 @@ namespace ReleaseNotesGenerator.Sources
                 string json = File.ReadAllText(_configFilePath, Encoding.UTF8);
                 var config = JsonConvert.DeserializeObject<ConfigContent>(json);
 
-                // Ensure the Repos dictionary is initialized
                 if (config.Repos == null)
                 {
                     config.Repos = new Dictionary<string, string>();
+                }
+
+                if (config.EmailRecipients == null)
+                {
+                    config.EmailRecipients = new List<string>();
+                }
+
+                if (config.CcRecipients == null)
+                {
+                    config.CcRecipients = new List<string>();
                 }
 
                 return config;
@@ -76,7 +85,10 @@ namespace ReleaseNotesGenerator.Sources
             var defaultConfig = new ConfigContent
             {
                 LimitThreshold = limitThreshold,
-                EmailContent = "Dear all,<br><br>This is an <b>example</b> email.<br><br><release-notes>",
+                EmailContent = "Default email content about SVN repository changes.",
+                EmailSubject = "SVN Changes",
+                EmailRecipients = new List<string> { "team@example.com", "manager@example.com" },
+                CcRecipients = new List<string> { "records@example.com" },
                 Repos = new Dictionary<string, string>
                 {
                     { "MainRepo", "http://svn.example.com/main" },

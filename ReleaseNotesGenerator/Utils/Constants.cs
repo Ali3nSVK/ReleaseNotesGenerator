@@ -7,6 +7,7 @@
         public static string NoDEF = "Update your config file with proper SVN repos and run RNG again.";
         public static string NoDIR = "Invalid SVN working directory.";
         public static string NoREP = "Specified URL is not a valid SVN repository.";
+        public static string NoEXC = "Please close outlook before proceeding. Continue?";
 
         public static string StatusIdle = "Idle...";
         public static string StatusLog = "Retrieving SVN repository log...";

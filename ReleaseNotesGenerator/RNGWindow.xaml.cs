@@ -21,6 +21,8 @@ namespace ReleaseNotesGenerator
 
         public ConfigContent Config { get; set; }
         public string SelectedRepo { get; set; }
+        public bool IncludeEmailBody { get; set; }
+        public bool OpenEmailWindow { get; set; }
 
         public RNGWindow()
         {
@@ -32,6 +34,7 @@ namespace ReleaseNotesGenerator
         {
             AppPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             LastVersion = string.Empty;
+            IncludeEmailBody = true;
 
             svn = new SubversionHandler();
             cfg = new ConfigHandler(AppPath + "\\" + Constants.ConfigName);
@@ -63,7 +66,26 @@ namespace ReleaseNotesGenerator
 
                 UpdateStatus(Constants.StatusParse);
                 var parsedCommits = LogParser.GetParsedCommitInfo(SVNLog, LastVersion);
-                ReportWriter.WriteHtml(parsedCommits, Config.EmailContent);
+
+                string mailContent = IncludeEmailBody ? Config.EmailContent : string.Empty;
+                string reportContent = ReportWriter.WriteHtml(parsedCommits, mailContent);
+
+                if (OpenEmailWindow)
+                {
+                    var settings = Config.GetEmailSettings();
+                    settings.Body = reportContent;
+
+                    try
+                    {
+                        OutlookInterop.PrepareEmail(settings);
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Outlook error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                    ReportWriter.OpenReport(reportContent);
 
                 ProgBar.IsIndeterminate = false;
                 UpdateStatus(Constants.StatusIdle);
@@ -155,6 +177,12 @@ namespace ReleaseNotesGenerator
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
+            if (OpenEmailWindow &&
+                !(MessageBox.Show(Constants.NoEXC, "RNG", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes))
+            {
+                return;
+            }
+
             EnableDisableUI(false);
             GenerateReleaseNotes();
         }

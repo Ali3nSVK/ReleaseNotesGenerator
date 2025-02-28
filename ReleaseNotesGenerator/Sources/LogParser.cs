@@ -30,15 +30,28 @@ namespace ReleaseNotesGenerator.Sources
                         continue;
                 }
 
-                var jiras = Regex.Matches(commit, @"(?<=^JIRA\sIssue:)((?s)\s.*?)(?=(Description|Merge))", RegexOptions.Multiline);
+                var jiras = Regex.Matches(commit, @"(?<=^JIRA\sIssue:\s+.*)([a-zA-Z]+-\d+)", RegexOptions.Multiline);
                 var descs = Regex.Matches(commit, @"(?<=^Description:)((?s).*?)(?=Reviewer:)", RegexOptions.Multiline);
 
                 NewCommit(
                     jiras.Cast<Match>().Select(j => j.Value.Trim()).ToList(),
-                    descs.Cast<Match>().Select(d => d.Value.Trim()).ToList());
+                    descs.Cast<Match>().Select(d => d.Value.Trim()).ToList()
+                );
             }
 
+            CleanupCommits();
             return commitInfos;
+        }
+
+        private static void CleanupCommits()
+        {
+            foreach(var info in commitInfos)
+            {
+                info.JiraIssuesList = info.JiraIssuesList.Distinct().ToList();
+                info.DescriptionsList = info.DescriptionsList.Distinct().ToList();
+            }
+
+            commitInfos.RemoveAll(ci => ci.VersionBump);
         }
 
         private static void NewCommit(List<string> jiras, List<string> descs)
@@ -54,10 +67,9 @@ namespace ReleaseNotesGenerator.Sources
             {
                 commit = new CommitInfo
                 {
-                    JiraIssuesList = jiras.Distinct().ToList(),
-                    DescriptionsList = descs.Distinct().ToList()
+                    JiraIssuesList = jiras,
+                    DescriptionsList = descs
                 };
-
                 commitInfos.Add(commit);
             }
         }
